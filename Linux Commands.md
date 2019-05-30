@@ -51,3 +51,67 @@ Change directory to location specified in options
 - `mkdir -p` : 하위 디렉토리 생성 시, 상위 디렉토리가 없으면 상위 디렉토리도 함께 생성한다
   -  `a`까지 있고 `b`라는 디렉토리가 없는 상태에서 `mkdir ./a/b/c/`  하면 `b`, `c` 둘 다 생성
 - `rmdir` : delete (empty) directory
+- `rmdir -p` : 디렉토리 삭제 시, 지정한 최상위 디렉토리까지 삭제 시도 (단, 비어 있는 디렉토리만 삭제)
+
+#### Delete, Copy, Move
+
+- `rm` : delete files and directories with files in it (enter 'yes', 'ye', or 'y' to confirm)
+  - by default, option `-i` is included : prompt user before every removal
+  - no options (except `-i`): delete files only
+- `rm -f` : ignore prompts (+ hides any error messages)
+- `rm -r` : recursively deletes all directories and files (including child contents)
+  - first asks to descend into child directory
+  - e.g) `rm -rf ./*` : deletes all files and directories in the current directory without prompting the user
+  - e.g) `rm -rf /*` : deletes the entire server
+- `cp` : copy files and/or directories
+  - `cp [-option] [source] [source] ... [source] [target]`
+    - may change name of file to be copied
+    - may copy multiple sources with 1 command line
+    - wild card `*` : refers to all files in specified directory
+  - e.g) `cp /etc/inittab /backup/` : copy `inittab` into `/backup/`
+  - e.g) `cp /test/* ./a/` : copy all files in `/test/` into `./a/`
+- `cp -r` : recursively copy directory and all child files/directories in it
+- `mv` : move (cut and then paste)
+  - no options
+  - usage is essentially the same as the `cp` command
+  - file name change is also possible, but time created will remain the same
+    - e.g) `mv /backup/login /backup/login.defs`
+
+#### Touch
+
+- `touch` : create new empty files or change created date for existing files
+  - `touch -t YYYYMMDDHHmm fileOrDirectory`
+    - designate date and time (up to minutes)
+  - `touch -d YYYYMMDD fileOrDirectory`
+    - designate up to date
+  - if `fileOrDirectory` does not already exist, create a new empty file under that name
+  - but if `fileOrDirectory` already exists, only change the created date for that file
+    - no options : use current date and time
+    - use options to designate specific date and time
+
+#### Alias
+
+- `alias` : create shortcut
+  - e.g) `alias 1='clear'`, `cp='cp -i'`
+- `unalias` : disable shortcut
+  - e.g) `unalias 1`
+
+#### Print file content
+
+- `head -[n]` : print first _n_ lines of file (default: 10 lines)
+- `tail -[n]` : print last _n_ lines of file (default: 10 lines)
+- `more` : 화면 단위로 출력
+  - Ctrl + Enter => 1 more line
+  - Ctrl + Spacebar => 1 more page
+  - cannot view previous lines/pages
+  - cannot print directory content (only file content)
+- `less` : [program] use `J` and `K` to move up or down
+  - press `Q` to escape
+- `nl` : number each line
+  - e.g) `ls -l /etc/ | nl` : number each line when printing `ls -l /etc/`
+
+#### Pipe
+
+- combine multiple commands in a single line
+  - e.g) `ls -l /etc/ | nl | more | less`
+  - e.g) `ls -l /etc/ | nl | less | more`
