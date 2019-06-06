@@ -101,8 +101,8 @@ Change directory to location specified in options
 - `head -[n]` : print first _n_ lines of file (default: 10 lines)
 - `tail -[n]` : print last _n_ lines of file (default: 10 lines)
 - `more` : 화면 단위로 출력
-  - Ctrl + Enter => 1 more line
-  - Ctrl + Spacebar => 1 more page
+  - (Ctrl +) Enter => 1 more line
+  - (Ctrl +) Spacebar => 1 more page
   - cannot view previous lines/pages
   - cannot print directory content (only file content)
 - `less` : [program] use `J` and `K` to move up or down
@@ -113,5 +113,85 @@ Change directory to location specified in options
 #### Pipe
 
 - combine multiple commands in a single line
-  - e.g) `ls -l /etc/ | nl | more | less`
-  - e.g) `ls -l /etc/ | nl | less | more`
+  - Ex1) `ls -l /etc/ | nl | more | less`
+  - Ex2) `ls -l /etc/ | nl | less | more`
+- The rightmost command is applied first
+  - in the above examples, `more` and `less` cannot be applied simultaneously (as both commands have the same functionality)
+  - in Ex1, `more` is ignored (`less` is applied first). Vice versa for Ex2
+
+#### Concatenate `cat`
+
+- [Display file content 파일 내용 출력]
+  - e.g) `cat /etc/passwd` or `cat < /etc/passwd`
+- [Redirection 파일 내용 입력]
+  - e.g) `cat /etc/passwd > /testfile` 
+    - redirect standard output of `/etc/passwd` into `/testfile`
+    - (existing contents of /testfile will be overwritten)
+- [Redirection 디렉토리 목록을 별도 파일로 저장]
+  - e.g) `ls -l > /a`
+- [Create File 파일 생성]
+  - e.g) `cat > ./test` => 내용 입력 => Ctrl+D (정상 종료)
+  - e.g) `cat > ./test` => Ctrl+C (강제 종료) : creates/overwrites empty file `./test`
+    - Ctrl+Z (강제 정지) : for when Ctrl+C does not work
+- [Append 파일 내용 추가]
+  - e.g) `cat >> ./test` => 내용 입력 => Ctrl+D : append standard output to `./test`
+- [View (or create file of) contents of multiple files 파일 내용 병합]
+  - `cat ./a ./b` : display contents of `./a`, followed by contents of `./b`
+  - `cat ./a ./b > ./c` : combine `./a` and `./b` into new file `./c`
+- `cat -n` : display line numbers in file
+
+#### Time Related
+
+- `date` : display current date & time
+- `date MMDDHHMMYYYY` : manually change system time (Month Date Hour Minutes Year)
+  - e.g) `date 030815251994` : Mar 8, 1994, 15:25:00 KST
+- `rdate (-p)` : display date & time retrieved from the specified external source
+  - e.g) `rdate (-p) time.bora.net`
+- `rdate -s` : set date & time to the one retrieved from the specified external source
+- `clock` : current time in much detail
+- `cal` : display calendar for current month
+- `cal [year]` : display calendar for all 12 months of the specified _year_
+- `cal MM YYYY` : display calendar of specified month (and date)
+  - e.g) `cal 03 1994` : display month of March 1994
+  - e.g) `cal 08 03 1994` : display month of March 1994 with the 8th highlighted
+
+#### Find
+
+`find [path] [-option] [name] [-option] [type] ...`
+
+- `find / -name jiwon` : find file/directory whose name contains 'jiwon' (but won't differentiate files and directories)
+  - `find / -name jiwon -type d` : find directories only
+  - `find / -name jiwon -type f` : find files only
+- `find . -name "test*" -exec rm {} \;` : find all files beginning with "test" and then delete them
+- `find /down/ /tmp/ -name "test*" -exec rm {} \;` : find files in /tmp/ and /down/ which begins with "test" and then delete them
+- `find / -user root -perm /4000` : 최상위에서 사용자가 root이고 SetUID 허가권이 부여된 파일 검색
+  - append `2> /dev/null` to the above command => display output after excluding error messages
+
+#### Shutdown
+
+`shutdown [-akrhPHfFnc] [-t sec] time [message]`
+
+- `shutdown -h +10` : shutdown after 10 minutes
+- `shutdown -r 11:21` : shutdown at 11:21 am
+- this command may only be used in root mode
+- shutdown alert/warning message will be displayed every minute for the last 15 minutes before designated shutdown time
+  - custom alert message ex) `shutdown -h +10 "custom message"` (may press enter in the middle of the message)
+- `shutdown -h` : shutdown and then halt (init runlevel 0) = poweroff
+  - `init 0` also works
+- `shutdown -c` : cancel pending shutdown
+- `shutdown -r` : reboot after shutdown (init runlevel 6)
+  - `init 6` also works
+- `shutdown -t sec` : tell init to wait _sec_ seconds between sending processes the warning and the kill signal, before changing to another level
+- `shutdown time` : specifies when to perform the shutdown operation
+  - possible _time_ formats:
+    - `hh:mm`
+    - `+m`
+    - `now` == `+0` (immediate shutdown)
+
+#### Miscellaneous
+
+- `cp /some/file /directory/` == `/usr/bin/cp /some/file /directory/`
+- `who` , `whoami`, `w`
+- `write jiwon pts/1` : write messages to the specified user
+  - end conversation with Ctrl+C or Ctrl+Z
+- `wall "~~message~~"` : send message/notification to all users
